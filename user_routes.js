@@ -8,7 +8,7 @@ const passport = require('passport')
 const userModel = mongoose.model('user')
 
 router.route('/admin').put((req, res) =>{
-    if(!req.user || !req.user.isAdmin){
+    if(!req.isAuthenticated() || !req.user.isAdmin){
         return res.status(403).send('Action only available to admins!')
     }
 

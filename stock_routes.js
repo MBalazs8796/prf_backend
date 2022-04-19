@@ -5,7 +5,7 @@ const stockModel = mongoose.model('stock')
 const userModel = mongoose.model('user')
 
 router.route('/purchase/:id?').post((req,res)=>{
-    if(!req.user){
+    if(!req.isAuthenticated()){
         return res.status(403).send('Action only available to registered users!')
     }
 
@@ -18,7 +18,7 @@ router.route('/purchase/:id?').post((req,res)=>{
     stockModel.findOne({ name: req.params.id }, (err, aru) => {
         if (err) return res.status(500).send('DB error ' + err)
         if (!aru) return res.status(404).send('Item does not exist!')
-        if(aru.amount <= req.body.amount) return res.status(400).send('Not enough ' +aru.name+ ' in sock!')
+        if(aru.amount < req.body.amount) return res.status(400).send('Not enough ' +aru.name+ ' in sock!')
         aru.amount -= req.body.amount;
         aru.save((error) => {
             if (error) return res.status(500).send('DB error during stock update ' + error)
@@ -40,7 +40,7 @@ router.route('/purchase/:id?').post((req,res)=>{
 })
 
 router.route('/:id?').get((req, res) => {
-    if(!req.user){
+    if(!req.isAuthenticated()){
         return res.status(403).send('Action only available to registered users!')
     }
     if (!req.params.id) {
@@ -56,7 +56,7 @@ router.route('/:id?').get((req, res) => {
         })
     }
 }).post((req, res) => {
-    if(!req.user || !req.user.isAdmin){
+    if(!req.isAuthenticated() || !req.user.isAdmin){
         return res.status(403).send('Action only available to admins!')
     }
     if (!req.params.id || !req.body.cost) {
@@ -76,7 +76,7 @@ router.route('/:id?').get((req, res) => {
 
     }
 }).put((req, res) => {
-    if(!req.user || !req.user.isAdmin){
+    if(!req.isAuthenticated() || !req.user.isAdmin){
         return res.status(403).send('Action only available to admins!')
     }
     if (!req.params.id || (!req.body.cost && !req.body.amount)) {
@@ -94,7 +94,7 @@ router.route('/:id?').get((req, res) => {
         })
     }
 }).delete((req, res) => {
-    if(!req.user || !req.user.isAdmin){
+    if(!req.isAuthenticated() || !req.user.isAdmin){
         return res.status(403).send('Action only available to admins!')
     }
     if (!req.params.id) {

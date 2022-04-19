@@ -1,12 +1,12 @@
 const express = require('express');
 const mongoose = require('mongoose');
 const passport = require('passport');
-
+const cookieParser = require('cookie-parser')
 
 const session = require('express-session')
 const localStrategy = require('passport-local').Strategy
 const fs = require('fs');
-
+const cors = require('cors');
 
 const app = express();
 
@@ -27,6 +27,12 @@ app.use(express.json());
 app.use(express.urlencoded({
     extended: true
 }));
+
+
+
+app.use(cors({origin: function(origin, callback){
+    callback(null, true);
+}, credentials: true, methods: "GET,PUT,POST,DELETE,OPTIONS"}))
 
 passport.use('local', new localStrategy({usernameField: 'email'}, function (email, password, done) {
     const userModel = mongoose.model('user')
@@ -51,9 +57,10 @@ passport.deserializeUser(function (user, done) {
 });
 
 
-app.use(session({ secret: 'shroomStoreFunnyNumber11', resave: true }));
+app.use(session({ secret: 'shroomStoreFunnyNumber11', resave: true, cookie: { secure: false } }));
 app.use(passport.initialize())
 app.use(passport.session())
+app.use(cookieParser());
 
 app.use('/users', require('./user_routes'));
 app.use('/stock', require('./stock_routes'));
