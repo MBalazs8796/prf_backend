@@ -78,9 +78,9 @@ router.route('/logout').post((req, res) => {
 })
 
 router.route('/:id').get((req, res) => {
-    userModel.find({ username: req.params.id }, (err, user) => {
+    userModel.findOne({ email: req.params.id }, (err, user) => {
         if (err) return res.status(500).send('DB hiba ' + err)
-        if (!user) return res.status(400).send('No user with provided username!')
+        if (!user) return res.status(400).send('No user with provided email!')
         return res.status(200).send(user)
     })
 }).post((req, res) => {

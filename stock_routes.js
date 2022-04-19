@@ -103,7 +103,7 @@ router.route('/:id?').get((req, res) => {
             return res.status(200).send('Deleted everything')
         })
     } else {
-        stockModel.findOne({nev: req.params.id}, (err, aru) => {
+        stockModel.findOne({name: req.params.id}, (err, aru) => {
             if(err) return res.status(500).send('DB error ' + err)
             if(!aru) return res.status(400).send('Item does not exist!')
             aru.delete((error) => { 
