@@ -7,6 +7,8 @@ const session = require('express-session')
 const localStrategy = require('passport-local').Strategy
 const fs = require('fs');
 const cors = require('cors');
+const path = require('path');
+
 
 const app = express();
 
@@ -61,6 +63,8 @@ app.use(session({ secret: 'shroomStoreFunnyNumber11', resave: true, cookie: { se
 app.use(passport.initialize())
 app.use(passport.session())
 app.use(cookieParser());
+
+app.use(express.static(path.join(__dirname, 'public'))).set('views', path.join(__dirname, 'views')).set('view engine', 'ejs').get('/', (req, res) => res.render('pages/index'));
 
 app.use('/users', require('./user_routes'));
 app.use('/stock', require('./stock_routes'));
